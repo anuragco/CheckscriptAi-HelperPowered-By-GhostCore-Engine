@@ -1,8 +1,4 @@
-// renderer.js
-// This script now only listens for messages from the C++ engine and updates the UI.
-
 document.addEventListener('DOMContentLoaded', () => {
-    // Window control listeners remain the same
     const closeBtn = document.getElementById('close-btn');
     closeBtn.addEventListener('click', () => window.api.send('window-close'));
 
@@ -12,7 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const maximizeBtn = document.getElementById('maximize-btn');
     maximizeBtn.addEventListener('click', () => window.api.send('window-maximize'));
     
-    // Copy button listener needs to be here as well
     const copyButton = document.getElementById('copy-mac-button');
     copyButton.addEventListener('click', () => {
         const macAddress = document.getElementById('mac-address-display').textContent;
@@ -32,11 +27,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// This is the main listener for all messages from the C++ engine
 window.api.on('engine-message', (data) => {
     console.log('Received data from engine:', data);
 
-    // Use a switch statement to handle different message types
     switch (data.type) {
         case 'status':
             const statusEl = document.getElementById('status');
@@ -48,12 +41,9 @@ window.api.on('engine-message', (data) => {
             const errorEl = document.getElementById('status');
             if (errorEl) errorEl.textContent = `Error: ${errorPayload}`;
 
-            // Check if this is the specific activation error.
             if (errorPayload && errorPayload.includes('Software not activated for MAC:')) {
-                // Extract the MAC address from the error message
                 const macAddress = errorPayload.split(': ').pop();
 
-                // Show the activation overlay
                 const overlay = document.getElementById('activation-overlay');
                 if (overlay) overlay.classList.remove('hidden');
 
@@ -76,7 +66,6 @@ window.api.on('engine-message', (data) => {
             break;
 
         case 'calibration-update':
-            // This now handles both option points and region points
             const pointEl = document.getElementById(`cal-point-${data.payload.key}`);
             if (pointEl) {
                 pointEl.textContent = `X:${data.payload.pos.x}, Y:${data.payload.pos.y}`;
