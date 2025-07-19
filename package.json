@@ -1,0 +1,38 @@
+{
+  "name": "checkscript-ai-helper",
+  "version": "1.0.0",
+  "description": "AI Helper for CheckScript",
+  "main": "main.js",
+  "author": "anura",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder"
+  },
+  "dependencies": {
+    "@nut-tree-fork/nut-js": "^4.2.6",
+    "macaddress": "^0.5.3"
+  },
+  "devDependencies": {
+    "electron": "28.2.3",
+    "electron-builder": "^24.9.1"
+  },
+  "build": {
+    "appId": "com.checkscript.ai-helper",
+    "productName": "CheckScript AI Helper",
+    "files": [
+      "**/*"
+    ],
+    "win": {
+      "target": "nsis-web",
+      "icon": "build/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    },
+    "publish": {
+      "provider": "generic",
+      "url": "https://checkscript.site/downloads"
+    }
+  }
+}
