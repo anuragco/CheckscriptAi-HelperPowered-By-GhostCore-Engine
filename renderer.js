@@ -84,3 +84,6 @@ window.api.on('engine-message', (data) => {
             break;
     }
 });
+
+
+//all setup for IPC communication
