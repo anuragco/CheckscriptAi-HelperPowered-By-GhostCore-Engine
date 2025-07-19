@@ -11,6 +11,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const maximizeBtn = document.getElementById('maximize-btn');
     maximizeBtn.addEventListener('click', () => window.api.send('window-maximize'));
+    
+    // Copy button listener needs to be here as well
+    const copyButton = document.getElementById('copy-mac-button');
+    copyButton.addEventListener('click', () => {
+        const macAddress = document.getElementById('mac-address-display').textContent;
+        const tempTextArea = document.createElement('textarea');
+        tempTextArea.value = macAddress;
+        document.body.appendChild(tempTextArea);
+        tempTextArea.select();
+        try {
+            document.execCommand('copy');
+            copyButton.textContent = 'Copied!';
+            setTimeout(() => { copyButton.textContent = 'Copy MAC'; }, 2000);
+        } catch (err) {
+            console.error('Failed to copy MAC address: ', err);
+            copyButton.textContent = 'Error!';
+        }
+        document.body.removeChild(tempTextArea);
+    });
 });
 
 // This is the main listener for all messages from the C++ engine
@@ -24,6 +43,28 @@ window.api.on('engine-message', (data) => {
             if (statusEl) statusEl.textContent = data.payload;
             break;
 
+        case 'error':
+            const errorPayload = data.payload;
+            const errorEl = document.getElementById('status');
+            if (errorEl) errorEl.textContent = `Error: ${errorPayload}`;
+
+            // Check if this is the specific activation error.
+            if (errorPayload && errorPayload.includes('Software not activated for MAC:')) {
+                // Extract the MAC address from the error message
+                const macAddress = errorPayload.split(': ').pop();
+
+                // Show the activation overlay
+                const overlay = document.getElementById('activation-overlay');
+                if (overlay) overlay.classList.remove('hidden');
+
+                const mainContent = document.getElementById('main-content');
+                if (mainContent) mainContent.classList.add('blur-sm', 'pointer-events-none');
+
+                const macDisplay = document.getElementById('mac-address-display');
+                if (macDisplay) macDisplay.textContent = macAddress;
+            }
+            break;
+
         case 'ocr-result':
             const ocrTextEl = document.getElementById('ocr-text');
             if (ocrTextEl) ocrTextEl.textContent = data.payload || 'No text detected.';
@@ -35,6 +76,7 @@ window.api.on('engine-message', (data) => {
             break;
 
         case 'calibration-update':
+            // This now handles both option points and region points
             const pointEl = document.getElementById(`cal-point-${data.payload.key}`);
             if (pointEl) {
                 pointEl.textContent = `X:${data.payload.pos.x}, Y:${data.payload.pos.y}`;
@@ -43,7 +85,7 @@ window.api.on('engine-message', (data) => {
             break;
         
         case 'clear-calibration':
-             ['A', 'B', 'C', 'D'].forEach(key => {
+             ['A', 'B', 'C', 'D', 'p1', 'p2'].forEach(key => {
                 const pointEl = document.getElementById(`cal-point-${key}`);
                 if (pointEl) {
                     pointEl.textContent = 'Not Set';
@@ -51,7 +93,5 @@ window.api.on('engine-message', (data) => {
                 }
             });
             break;
-
-        // Add more cases here for other messages from your C++ engine
     }
 });
