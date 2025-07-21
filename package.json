@@ -1,12 +1,13 @@
 {
   "name": "checkscript-ai-helper",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "AI Helper for CheckScript",
   "main": "main.js",
-  "author": "anura",
+  "author": "Anurag Anand",
+  "repository": "anuragco/CheckscriptAi-HelperPowered-By-GhostCore-Engine",
   "scripts": {
     "start": "electron .",
-    "build": "electron-builder"
+    "build": "electron-builder --publish always"
   },
   "dependencies": {
     "@nut-tree-fork/nut-js": "^4.2.6",
@@ -22,17 +23,21 @@
     "files": [
       "**/*"
     ],
+    "asarUnpack": [
+      "engine/**/*"
+    ],
     "win": {
       "target": "nsis-web",
       "icon": "build/icon.ico"
     },
     "nsis": {
       "oneClick": false,
-      "allowToChangeInstallationDirectory": true
+      "allowToChangeInstallationDirectory": true,
+      "perMachine": false,
+      "allowElevation": false
     },
     "publish": {
-      "provider": "generic",
-      "url": "https://checkscript.site/downloads"
+      "provider": "github"
     }
   }
 }

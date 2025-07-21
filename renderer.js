@@ -1,30 +1,41 @@
 document.addEventListener('DOMContentLoaded', () => {
+   
+    const stealthButton = document.getElementById('stealth-button');
+    if (stealthButton) {
+        stealthButton.addEventListener('click', () => window.api.send('enter-stealth-mode'));
+    }
+   
+
+    
     const closeBtn = document.getElementById('close-btn');
-    closeBtn.addEventListener('click', () => window.api.send('window-close'));
+    if (closeBtn) closeBtn.addEventListener('click', () => window.api.send('window-close'));
 
     const minimizeBtn = document.getElementById('minimize-btn');
-    minimizeBtn.addEventListener('click', () => window.api.send('window-minimize'));
+    if (minimizeBtn) minimizeBtn.addEventListener('click', () => window.api.send('window-minimize'));
 
     const maximizeBtn = document.getElementById('maximize-btn');
-    maximizeBtn.addEventListener('click', () => window.api.send('window-maximize'));
+    if (maximizeBtn) maximizeBtn.addEventListener('click', () => window.api.send('window-maximize'));
     
+  
     const copyButton = document.getElementById('copy-mac-button');
-    copyButton.addEventListener('click', () => {
-        const macAddress = document.getElementById('mac-address-display').textContent;
-        const tempTextArea = document.createElement('textarea');
-        tempTextArea.value = macAddress;
-        document.body.appendChild(tempTextArea);
-        tempTextArea.select();
-        try {
-            document.execCommand('copy');
-            copyButton.textContent = 'Copied!';
-            setTimeout(() => { copyButton.textContent = 'Copy MAC'; }, 2000);
-        } catch (err) {
-            console.error('Failed to copy MAC address: ', err);
-            copyButton.textContent = 'Error!';
-        }
-        document.body.removeChild(tempTextArea);
-    });
+    if (copyButton) {
+        copyButton.addEventListener('click', () => {
+            const macAddress = document.getElementById('mac-address-display').textContent;
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = macAddress;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            try {
+                document.execCommand('copy');
+                copyButton.textContent = 'Copied!';
+                setTimeout(() => { copyButton.textContent = 'Copy MAC'; }, 2000);
+            } catch (err) {
+                console.error('Failed to copy MAC address: ', err);
+                copyButton.textContent = 'Error!';
+            }
+            document.body.removeChild(tempTextArea);
+        });
+    }
 });
 
 window.api.on('engine-message', (data) => {
@@ -43,13 +54,10 @@ window.api.on('engine-message', (data) => {
 
             if (errorPayload && errorPayload.includes('Software not activated for MAC:')) {
                 const macAddress = errorPayload.split(': ').pop();
-
                 const overlay = document.getElementById('activation-overlay');
                 if (overlay) overlay.classList.remove('hidden');
-
                 const mainContent = document.getElementById('main-content');
                 if (mainContent) mainContent.classList.add('blur-sm', 'pointer-events-none');
-
                 const macDisplay = document.getElementById('mac-address-display');
                 if (macDisplay) macDisplay.textContent = macAddress;
             }
@@ -84,6 +92,3 @@ window.api.on('engine-message', (data) => {
             break;
     }
 });
-
-
-//all setup for IPC communication

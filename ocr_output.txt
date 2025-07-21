@@ -1,0 +1,11 @@
+The average temperature for Wednesday, Thursday and Friday was
+40°C. The average for Thursday, Friday and Saturday was 41° C. If
+temperature on Saturday was 42° C, what was the temperature on
+
+Wednesday?
+
+A. © 39°C
+B. O 44°C
+Cc. O 38°C
+
+D. © 41°C
